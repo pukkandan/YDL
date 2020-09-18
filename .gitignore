@@ -2,3 +2,5 @@ temp/*
 youtube-dl-*/*
 Download/*
 ydl.ahk.ini
+*.exe
+*.sublime*

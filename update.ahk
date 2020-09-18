@@ -4,10 +4,10 @@ global SCRNAME:="YDL Updater"
 global EXE:="ydl.ahk"
 global TEMP:=A_ScriptDir "\temp"
 
-Options:=[	 {	 "url": "https://codeload.github.com/pukkandan/youtube-dl/zip/my-tweaks" 		}
+Options:=[	 {	 "url": "https://codeload.github.com/pukkandan/youtube-dl/zip/my-tweaks", unzip:True 	}
 			,{	 "url": "https://codeload.github.com/pukkandan/YDL/zip/master"
-				,"temp": True
-				,"run": "YDL-master\update-run-once.ahk"									}	]
+				,"temp": True, unzip:True
+				,"run": "YDL-master\update-run-once.ahk"												}	]
 
 
 
@@ -15,10 +15,15 @@ Options:=[	 {	 "url": "https://codeload.github.com/pukkandan/youtube-dl/zip/my-t
 
 
 ;=================== CODE
+FileInstall, icon.png, icon.png
 SetWorkingDir, % A_ScriptDir
 #SingleInstance, force
 #NoEnv
-#NoTrayIcon
+
+if FileExist("icon.png")
+	Menu, Tray, Icon, icon.png
+Menu, Tray, Tip, % SCRNAME
+;#NoTrayIcon
 
 
 FileCreateDir, % TEMP
@@ -30,14 +35,19 @@ for _,item in Options {
 		return
 	}
 	;msgbox % "downloaded " item.url
+	
 	path:= item.temp? TEMP : A_WorkingDir
-	unzip(zipfile, path)
+	if item.unzip
+		unzip(zipfile, path)
 	;msgbox % "unzipped " zipfile
-	FileDelete, % zipfile
-	if item.hasKey("run")
-		run, % path "\" item.run,, UseErrorLevel
-}
 
+	FileDelete, % zipfile
+	if item.hasKey("run") {
+		sleep 100
+		run, % path "\" item.run,, UseErrorLevel
+	}
+}
+sleep 100
 run, % EXE
 
 

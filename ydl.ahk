@@ -1,12 +1,31 @@
 ﻿SetWorkingDir, % A_ScriptDir
 #SingleInstance, force
 #NoEnv
+
+; In case the script is compiled
+FileInstall, LICENSE, LICENSE, 1
+FileInstall, README.md, README.md, 1
+FileInstall, icon.png, icon.png
+FileInstall, retry.cmd, retry.cmd
+FileInstall, terminal-format.cmd, terminal-format.cmd
+FileInstall, youtube-dl.cmd, youtube-dl.cmd
+FileInstall, update.ahk, update.ahk
+FileInstall, update-run-once.ahk, update-run-once.ahk
+FileInstall, Channel.conf, Channel.conf
+FileInstall, Default.conf, Default.conf
+FileInstall, Folder.conf, Folder.conf
+FileInstall, Playlist Reverse.conf, Playlist Reverse.conf
+FileInstall, Playlist.conf, Playlist.conf
+;=================================
+
+Menu, Tray, Icon, icon.png
+Menu, Tray, Tip, % SCRNAME
 #NoTrayIcon
 
 EnvSet, ydl_dir, % A_ScriptDir
-global SCRNAME:="Youtube Downloader"
+global SCRNAME:="Youtube-Dl Launcher"
 
-global Path:=getOpt("path", A_WorkingDir "\Download"), Opts:=getOpt("opts"), Prof:=getOpt("profile","<NONE>"), URL, resSign:=getOpt("sign",">="), Res:=getOpt("res","720")
+global Path:=getOpt("path", A_WorkingDir "\Download"), Opts:=getOpt("opts"), Prof:=getOpt("profile","<None>"), URL, resSign:=getOpt("sign",">="), Res:=getOpt("res","720")
 
 Gui, Margin, 10, 10
 
@@ -21,10 +40,11 @@ Gui, Add, Edit, vPath x+m W380 yp-5, % Path
 Gui, Add, Button, gPathClicked yp-1 x+0 W20, ...
 
 Gui, Add, Text, xm y+15 W50 Right, Resolution
-Gui, Add, DropDownList, vresSign x+m yp-5 W40 section section, >=|<=
+Gui, Add, DropDownList, vresSign x+m yp-5 W40 section, >=|<=
 guiSet("resSign", resSign, "ChooseString")
-Gui, Add, ComboBox, vRes x+0 yp W50, 0|144|360|480|720|1080|2160
+Gui, Add, ComboBox, vRes gResChanged x+m yp W70, Audio|Smallest|144|360|480|720|1080|2160|Largest
 guiSet("Res", Res)
+ResChanged()
 
 Gui, Add, Text, x+m yp+5 W50 Right, Profile
 Gui, Add, ComboBox, vProf x+m yp-5 W100, % createProfList()
@@ -40,16 +60,8 @@ Return
 GuiClose:
 ExitApp
 
-guiSet(key, val, type="Text") {
-	GuiControl, % type, % key, % val
-}
 
-createProfList() {
-	ret:="<NONE>"
-	Loop, Files, *.conf
-		ret.="|" subStr(A_LoopFileName, 1, -5)
-	return ret
-}
+
 
 Download(){
 	Gui, +OwnDialogs
@@ -57,22 +69,18 @@ Download(){
 	if !validate()
 		return
 
-	urls := !regexReplace(URL,"S)\s+")?"": "-- """ RegexReplace(url,"S)\s+", " ") """"
-	getAud := Res==0? "-x -f bestaudio" :""
-	format := "--format-sort """ (resSign=="<="?"":"+") "height:" res ",width,proto_preference,+fps,codec_preference,+filesize,+filesize_approx,+tbr,+vbr,+abr,audio_codec_preference"""
-	prof := Prof=="<NONE>"?"": "--config-location """ Prof ".conf"""
+	urls 	:= !regexReplace(URL,"S)\s+")?"": "-- """ RegexReplace(url,"S)\s+", " ") """"
+	getAud 	:= Res="audio"? "-x -f bestaudio" :""
+	prof 	:= Prof="<None>"? "--output ""%ydl_home%/%%(uploader)s - %%(title)s [%%(id)s] (%%(resolution)s).%%(ext)s""": "--config-location """ Prof ".conf"""
+
+	reverseSort := resSign==">=" || Res="smallest"
+	resolution 	:= isInteger(Res)? ":" Res :""
+	format 		:= "--format-sort """ (reverseSort?"+":"") "height" resolution ",width,proto_preference,+fps,codec_preference,+filesize,+filesize_approx,+tbr,+vbr,+abr,audio_codec_preference"""
+
 	EnvSet, ydl_home, % Path
-
 	cmd := "retry.cmd youtube-dl " prof " " format " " getAud " " Opts " " urls
-	msgbox % cmd
+	;msgbox % cmd
 	run, % cmd
-}
-
-PathClicked(){
-	Gui, +OwnDialogs
-	GuiControlGet, current,, Path
-	FileSelectFolder, folder, % current, 3
-	guiSet("Path", folder? folder :current)
 }
 
 validate(){
@@ -82,9 +90,7 @@ validate(){
 			return False
 	}
 
-	if Res is not integer
-		return showErr("Resolution", Res)
-	if Res<0
+	if (isInteger(Res) && Res<=0) || (!isInteger(Res) && !inStr("audio`nsmallest`nlargest", Res))
 		return showErr("Resolution", Res)
 
 	Path:=RegExReplace(Path, "\\$")
@@ -92,7 +98,7 @@ validate(){
 	if !InStr(FileExist(Path), "D")
 		return showErr("Path", Path)
 
-	if (Prof!="<NONE>" && !FileExist(Prof ".conf"))
+	if (Prof!="<None>" && !FileExist(Prof ".conf"))
 		return showErr("Profile", Prof)
 
 	saveOpt("path", Path)
@@ -102,6 +108,32 @@ validate(){
 	saveOpt("res", Res)
 	return true
 }
+
+PathClicked(){
+	Gui, +OwnDialogs
+	GuiControlGet, current,, Path
+	FileSelectFolder, folder, % current, 3
+	guiSet("Path", folder? folder :current)
+}
+
+ResChanged(){
+	GuiControlGet, current,, Res
+	if isInteger(current)
+		GuiControl, Enable, resSign
+	else
+		GuiControl, Disable, resSign
+}
+
+createProfList() {
+	ret:="<None>"
+	Loop, Files, *.conf
+		ret.="|" subStr(A_LoopFileName, 1, -5)
+	return ret
+}
+
+
+
+
 
 showErr(key, val) {
 	msgbox, 16, % SCRNAME, "%val%" is not a valid %key%
@@ -115,4 +147,14 @@ saveOpt(key, val) {
 getOpt(key, def:=" ") {
 	IniRead, out, % A_ScriptFullPath ".ini", Options, % key, % def
 	return out
+}
+
+guiSet(key, val, type="Text") {
+	GuiControl, % type, % key, % val
+}
+
+isInteger(x) {
+	if x is Integer
+		return True
+	return False
 }

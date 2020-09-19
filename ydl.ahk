@@ -25,7 +25,16 @@ Menu, Tray, Tip, % SCRNAME
 EnvSet, ydl_dir, % A_ScriptDir
 global SCRNAME:="Youtube-Dl Launcher"
 
-global Path:=getOpt("path", A_WorkingDir "\Download"), Opts:=getOpt("opts"), Prof:=getOpt("profile","<None>"), URL, resSign:=getOpt("sign",">="), Res:=getOpt("res","720")
+global Path	:= getOpt("path", A_WorkingDir "\Download")
+	 , Opts	:= getOpt("opts")
+	 , Prof	:= getOpt("prof", "<None>")
+	 , Sign	:= getOpt("sign", ">=")
+	 , Res	:= getOpt("res", "720")
+	 , Log	:= getOpt("log", True, "Hidden")
+	 , Meta	:= getOpt("meta", True, "Hidden")
+	 , Name	:= StrReplace(getOpt("name", "%ydl_home%/%(uploader)s - %(title)s [%(id)s] (%(resolution)s).%(ext)s", "Hidden"), "(?<!%)%\(", "%%(")
+	 , Def	:= getOpt("opts",, "Hidden")
+	 , URL	:= ""
 
 Gui, Margin, 10, 10
 
@@ -40,8 +49,8 @@ Gui, Add, Edit, vPath x+m W380 yp-5, % Path
 Gui, Add, Button, gPathClicked yp-1 x+0 W20, ...
 
 Gui, Add, Text, xm y+15 W50 Right, Resolution
-Gui, Add, DropDownList, vresSign x+m yp-5 W40 section, >=|<=
-guiSet("resSign", resSign, "ChooseString")
+Gui, Add, DropDownList, vSign x+m yp-5 W40 section, >=|<=
+guiSet("Sign", Sign, "ChooseString")
 Gui, Add, ComboBox, vRes gResChanged x+m yp W70, Audio|Smallest|144|360|480|720|1080|2160|Largest
 guiSet("Res", Res)
 ResChanged()
@@ -69,17 +78,19 @@ Download(){
 	if !validate()
 		return
 
-	urls 	:= !regexReplace(URL,"S)\s+")?"": "-- """ RegexReplace(url,"S)\s+", " ") """"
+	urls 	:= "-- """ RegexReplace(url,"S)\s+", " ") """"
 	getAud 	:= Res="audio"? "-x -f bestaudio" :""
-	prof 	:= Prof="<None>"? "--output ""%ydl_home%/%%(uploader)s - %%(title)s [%%(id)s] (%%(resolution)s).%%(ext)s""": "--config-location """ Prof ".conf"""
+	prof 	:= Prof="<None>"? "--output """ Name """" : "--config-location """ Prof ".conf"""
+	metaStr := Meta? "--add-metadata" :""
 
-	reverseSort := resSign==">=" || Res="smallest"
+	reverseSort := Sign==">=" || Res="smallest"
 	resolution 	:= isInteger(Res)? ":" Res :""
 	format 		:= "--format-sort """ (reverseSort?"+":"") "height" resolution ",width,proto_preference,+fps,codec_preference,+filesize,+filesize_approx,+tbr,+vbr,+abr,audio_codec_preference"""
 
 	EnvSet, ydl_home, % Path
-	cmd := "retry.cmd youtube-dl " prof " " format " " getAud " " Opts " " urls
-	;msgbox % cmd
+	cmd := "retry.cmd youtube-dl " prof " " format " " getAud " " metaStr " " Def " " Opts " " urls
+	if Log
+		log(cmd)
 	run, % cmd
 }
 
@@ -104,7 +115,7 @@ validate(){
 	saveOpt("path", Path)
 	saveOpt("profile", Prof)
 	saveOpt("opts", Opts)
-	saveOpt("sign", resSign)
+	saveOpt("sign", Sign)
 	saveOpt("res", Res)
 	return true
 }
@@ -119,9 +130,9 @@ PathClicked(){
 ResChanged(){
 	GuiControlGet, current,, Res
 	if isInteger(current)
-		GuiControl, Enable, resSign
+		GuiControl, Enable, Sign
 	else
-		GuiControl, Disable, resSign
+		GuiControl, Disable, Sign
 }
 
 createProfList() {
@@ -133,19 +144,22 @@ createProfList() {
 
 
 
-
+log(cmd){
+	FormatTime, timestamp,, yyyy-MM-dd HH:mm:ss
+	FileAppend, % "`n[" timestamp "]`t" cmd, % A_ScriptFullPath ".log"
+}
 
 showErr(key, val) {
 	msgbox, 16, % SCRNAME, "%val%" is not a valid %key%
 	return false
 }
 
-saveOpt(key, val) {
-	IniWrite, % val, % A_ScriptFullPath ".ini", Options, % key
+saveOpt(key, val, sect:="Options") {
+	IniWrite, % val, % A_ScriptFullPath ".ini", % sect, % key
 }
 
-getOpt(key, def:=" ") {
-	IniRead, out, % A_ScriptFullPath ".ini", Options, % key, % def
+getOpt(key, def:=" ", sect:="Options") {
+	IniRead, out, % A_ScriptFullPath ".ini", % sect, % key, % def
 	return out
 }
 

@@ -4,8 +4,8 @@ A Simple GUI Launcher for [my own fork](https://github.com/pukkandan/youtube-dl/
 
 ## Prerequisites
 
-* [AHK1.1](https://www.autohotkey.com/download/)
-* [Python3](https://www.python.org/downloads/windows/)
+* [AHK1.1.\*](https://www.autohotkey.com/download/)
+* [Python3.2+](https://www.python.org/downloads/windows/)
 
 #### Optional
 * [ffmpeg](https://www.gyan.dev/ffmpeg/builds/) - Required for mergring audio and video files together, extracting audio, embedding metadata etc
@@ -13,12 +13,12 @@ A Simple GUI Launcher for [my own fork](https://github.com/pukkandan/youtube-dl/
 
 ## How to Use
 
-1. Install [AHK1.1](https://www.autohotkey.com/download/) and [Python3](https://www.python.org/downloads/windows/).
+1. Install [AHK1.1.\*](https://www.autohotkey.com/download/) and [Python3.2+](https://www.python.org/downloads/windows/).
 1. Download the [optional](#optional) prerequisites if needed.
 1. Download either the entire repository or just [update.ahk](https://github.com/pukkandan/YDL/blob/master/update.ahk) and place the file(s) in an empty folder.
 1. Either make sure the all the prerequisites (except AHK) are available in `PATH` variable, or copy them to the script directory.
-1. Open [update.ahk](https://github.com/pukkandan/YDL/blob/master/update.ahk) with AHK. This will download the latest version of both YDL and youtube-dl to the same folder.
-1. Open [YDL.ahk](https://github.com/pukkandan/YDL/blob/master/ydl.ahk) with AHK.
+1. Run [update.ahk](https://github.com/pukkandan/YDL/blob/master/update.ahk) with AHK. This will download the latest version of both YDL and youtube-dl to the same folder.
+1. Run [YDL.ahk](https://github.com/pukkandan/YDL/blob/master/ydl.ahk) with AHK.
 
 ## Profiles
 
@@ -31,6 +31,32 @@ The script makes two additional variables available in these configuration files
 The profile **MUST** define the file naming pattern using the `ydl_home` variable. Eg: `--output "%ydl_home%/%(uploader)s - %(title)s [%(id)s] (%(resolution)s).%(ext)s"`. Otherwise, the file will be downloaded to the path given in the profile (or in the script directory if either a relative path or no path is given).
 
 It is recomended that you make your own profiles instead of editing the exising ones since updates will reset the profile back to default. (This issue will be fixed in a later version)
+
+## Configuration
+
+All settings are saved in the file [ydl.ahk.ini](https://github.com/pukkandan/YDL/blob/master/ydl.ahk.ini). The settings are read when the script starts and saved everytime a download sucessfully launches. All options that is to be passed into youtube-dl directly must be properly escaped. The only exception is that `%(` doesn't need to be encoded as `%%(` in **\[Hidden\]/name**
+
+### \[Options\]
+
+Key | Saves the last used value of
+------------ | -------------
+**prof**|[Profile](#profiles)
+**res**|Resolution
+**sign**|Sign prefixing Resolution (`>=`/`<=`)
+**path**|Path
+**opts**|[Options](https://github.com/ytdl-org/youtube-dl#options) to be passed to youtube-dl
+
+
+### \[Hidden\]
+
+These options are not changable in the GUI.
+
+Key | Description
+------------ | -------------
+**log**| Whether to log the command to [ydl.ahk.log](https://github.com/pukkandan/YDL/blob/master/ydl.ahk.log) (`1`=Log, `0`=Don't log).
+**meta**| Whether to embed metadata. (`1`=Embed, `0`=Don't embed)
+**name**| [Naming pattern](https://github.com/ytdl-org/youtube-dl#output-template) to use when no profile is given.
+**opts**| These [options](https://github.com/ytdl-org/youtube-dl#options) will be additionally passed to youtube-dl. Only the options given in **\[Options\]/opts** may override these.
 
 ## FAQ
 

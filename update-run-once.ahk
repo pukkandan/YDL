@@ -4,5 +4,10 @@ SetWorkingDir, % A_ScriptDir
 
 #NoTrayIcon
 
-FileMove, *, %A_WorkingDir%\..\..\, True
+baseDir:= A_WorkingDir "\..\..\"
+
+FileMove, *, % baseDir, True
 FileRemoveDir, % A_WorkingDir, False
+
+;Remove old fork of youtube-dl
+FileRemoveDir, % baseDir "youtube-dl-my-tweaks", True

@@ -32,6 +32,7 @@ global Path	:= getOpt("path", A_WorkingDir "\Download")
 	 , Res	:= getOpt("res", "720")
 	 , Log	:= getOpt("log", True, "Hidden")
 	 , Meta	:= getOpt("meta", True, "Hidden")
+	 , Dash	:= getOpt("dash", False, "Hidden")
 	 , Name	:= RegexReplace(getOpt("name", "%ydl_home%/%(uploader)s - %(title)s [%(id)s] (%(resolution)s).%(ext)s", "Hidden"), "(?<!%)%\(", "%%(")
 	 , Def	:= getOpt("opts",, "Hidden")
 	 , URL	:= ""
@@ -79,7 +80,7 @@ Download(){
 		return
 
 	urls 	:= "-- """ RegexReplace(url,"S)\s+", """ """) """"
-	getAud 	:= Res="audio"? "-x -f bestaudio" :""
+	getAud 	:= Res="audio"? "-x -f bestaudio" : Dash?"": "-f (bestvideo+bestaudio/best)[protocol!=http_dash_segments]/(bestvideo+bestaudio/best)"
 	prof 	:= Prof="<None>"? "--output """ Name """" : "--config-location """ Prof ".conf"""
 	metaStr := Meta? "--add-metadata" :""
 

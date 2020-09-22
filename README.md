@@ -55,6 +55,7 @@ Key | Description
 ------------ | -------------
 **log**| Whether to log the command to [ydl.ahk.log](https://github.com/pukkandan/YDL/blob/master/ydl.ahk.log) (`1`=Log, `0`=Don't log).
 **meta**| Whether to embed metadata (`1`=Embed, `0`=Don't embed).
+**dash**| Whether to download DASH formats (`1`=Embed, `0`=Don't embed).
 **name**| [Naming pattern](https://github.com/ytdl-org/youtube-dl#output-template) to use when no profile is given.
 **opts**| These [options](https://github.com/ytdl-org/youtube-dl#options) will be additionally passed to `youtube-dl`. Only the options given in **\[Options\]/opts** may override these.
 

@@ -32,7 +32,7 @@ global Path	:= getOpt("path", A_WorkingDir "\Download")
 	 , Res	:= getOpt("res", "720")
 	 , Log	:= getOpt("log", True, "Hidden")
 	 , Meta	:= getOpt("meta", True, "Hidden")
-	 , Name	:= StrReplace(getOpt("name", "%ydl_home%/%(uploader)s - %(title)s [%(id)s] (%(resolution)s).%(ext)s", "Hidden"), "(?<!%)%\(", "%%(")
+	 , Name	:= RegexReplace(getOpt("name", "%ydl_home%/%(uploader)s - %(title)s [%(id)s] (%(resolution)s).%(ext)s", "Hidden"), "(?<!%)%\(", "%%(")
 	 , Def	:= getOpt("opts",, "Hidden")
 	 , URL	:= ""
 
@@ -78,7 +78,7 @@ Download(){
 	if !validate()
 		return
 
-	urls 	:= "-- """ RegexReplace(url,"S)\s+", " ") """"
+	urls 	:= "-- """ RegexReplace(url,"S)\s+", """ """) """"
 	getAud 	:= Res="audio"? "-x -f bestaudio" :""
 	prof 	:= Prof="<None>"? "--output """ Name """" : "--config-location """ Prof ".conf"""
 	metaStr := Meta? "--add-metadata" :""

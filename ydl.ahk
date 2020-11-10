@@ -80,13 +80,13 @@ Download(){
 		return
 
 	urls 	:= "-- """ RegexReplace(url,"S)\s+", """ """) """"
-	getAud 	:= Res="audio"? "-x -f bestaudio" : Dash?"": "-f (bestvideo+bestaudio/best)[protocol!=http_dash_segments]/(bestvideo+bestaudio/best)"
+	getAud 	:= Res="audio"? "-x -f bestaudio" : ""
 	prof 	:= Prof="<None>"? "--output """ Name """" : "--config-location """ Prof ".conf"""
 	metaStr := Meta? "--add-metadata" :""
 
 	reverseSort := Sign==">=" || Res="smallest"
 	resolution 	:= isInteger(Res)? ":" Res :""
-	format 		:= "--format-sort """ (reverseSort?"+":"") "height" resolution ",width,proto_preference,+fps,codec_preference,+filesize,+filesize_approx,+tbr,+vbr,+abr,audio_codec_preference"""
+	format 		:= "-S """ (Dash?"":"proto,") (reverseSort?"+":"") "res" resolution ",proto,+fps,codec:vp9,+size,+br,ext"""
 
 	EnvSet, ydl_home, % Path
 	cmd := "retry.cmd youtube-dl " prof " " format " " getAud " " metaStr " " Def " " Opts " " urls

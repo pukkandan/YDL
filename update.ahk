@@ -4,10 +4,10 @@ global SCRNAME:="YDL Updater"
 global EXE:="ydl.ahk"
 global TEMP:=A_ScriptDir "\temp"
 
-Options:=[	 {	 "url": "https://codeload.github.com/pukkandan/youtube-dl/zip/master", unzip:True 	}
-			,{	 "url": "https://codeload.github.com/pukkandan/YDL/zip/master"
+Options:=[	 {	 "url": "https://codeload.github.com/pukkandan/YDL/zip/master"
 				,"temp": True, unzip:True
-				,"run": "YDL-master\update-run-once.ahk"												}	]
+				,"run": "YDL-master\update-run-once.ahk"										}
+			,{	 "url": "https://codeload.github.com/pukkandan/yt-dlc/zip/master", unzip:True 	}	]
 
 
 

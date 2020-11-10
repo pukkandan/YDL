@@ -11,3 +11,4 @@ FileRemoveDir, % A_WorkingDir, False
 
 ;Remove old fork of youtube-dl
 FileRemoveDir, % baseDir "youtube-dl-my-tweaks", True
+FileRemoveDir, % baseDir "youtube-dl-master", True

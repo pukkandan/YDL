@@ -30,10 +30,7 @@ global Path	:= getOpt("path", A_WorkingDir "\Download")
 	 , Prof	:= getOpt("prof", "<None>")
 	 , Sign	:= getOpt("sign", ">=")
 	 , Res	:= getOpt("res", "720")
-	 , Log	:= getOpt("log", True, "Hidden")
-	 , Meta	:= getOpt("meta", True, "Hidden")
-	 , Dash	:= getOpt("dash", False, "Hidden")
-	 , Name	:= RegexReplace(getOpt("name", "%ydl_home%/%(uploader)s - %(title)s [%(id)s] (%(resolution)s).%(ext)s", "Hidden"), "(?<!%)%\(", "%%(")
+	 , Log	:= getOpt("log", False, "Hidden")
 	 , Def	:= getOpt("opts",, "Hidden")
 	 , URL	:= ""
 
@@ -80,16 +77,16 @@ Download(){
 		return
 
 	urls 	:= "-- """ RegexReplace(url,"S)\s+", """ """) """"
-	getAud 	:= Res="audio"? "-x -f bestaudio" : ""
-	prof 	:= Prof="<None>"? "--output """ Name """" : "--config-location """ Prof ".conf"""
-	metaStr := Meta? "--add-metadata" :""
+	getAud 	:= Res="audio"? "-x -f ba" : ""
+	prof 	:= Prof="<None>"? "" : "--config-location """ Prof ".conf"""
 
 	reverseSort := Sign==">=" || Res="smallest"
 	resolution 	:= isInteger(Res)? ":" Res :""
-	format 		:= "-S """ (Dash?"":"proto,") (reverseSort?"+":"") "res" resolution ",proto,+fps,codec:vp9,+size,+br,ext"""
+	format 		:= "-S """ (reverseSort?"+":"") "res" resolution """"
+	homePath	:= "-P ""home:" Path """"
 
 	EnvSet, ydl_home, % Path
-	cmd := "retry.cmd youtube-dl " prof " " format " " getAud " " metaStr " " Def " " Opts " " urls
+	cmd := "retry.cmd yt-dlp " homePath " " prof " " format " " getAud " " Def " " Opts " " urls
 	if Log
 		log(cmd)
 	run, % cmd
@@ -139,7 +136,10 @@ ResChanged(){
 createProfList() {
 	ret:="<None>"
 	Loop, Files, *.conf
-		ret.="|" subStr(A_LoopFileName, 1, -5)
+	{
+		if (A_LoopFileName!="yt-dlp.conf")
+			ret.="|" subStr(A_LoopFileName, 1, -5)
+	}
 	return ret
 }
 

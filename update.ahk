@@ -4,10 +4,11 @@ global SCRNAME:="YDL Updater"
 global EXE:="ydl.ahk"
 global TEMP:=A_ScriptDir "\temp"
 
-Options:=[	 {	 "url": "https://codeload.github.com/pukkandan/YDL/zip/master"
+Options:=[	 {	 "url": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+				,"file": "yt-dlp.exe" 															}
+			,{	 "url": "https://codeload.github.com/pukkandan/YDL/zip/master"
 				,"temp": True, unzip:True
-				,"run": "YDL-master\update-run-once.ahk"										}
-			,{	 "url": "https://codeload.github.com/pukkandan/yt-dlc/zip/master", unzip:True 	}	]
+				,"run": "YDL-master\update-run-once.ahk"										}	]
 
 
 
@@ -29,7 +30,7 @@ Menu, Tray, Tip, % SCRNAME
 FileCreateDir, % TEMP
 zipfile:=TEMP "\update.zip"
 for _,item in Options {
-	URLDownloadToFile, % item.url, % zipfile
+	URLDownloadToFile, % item.url, % item.file? item.file: zipfile
 	if ErrorLevel {
 		showErr("Downloading", item.url)
 		return

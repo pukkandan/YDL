@@ -1,8 +1,8 @@
 temp/*
-youtube-dl-*/*
 Download/*
 *.ahk.ini
 *.exe
 *.sublime*
 *.lnk
 *.log
+yt-dlp.conf

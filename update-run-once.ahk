@@ -9,6 +9,8 @@ baseDir:= A_WorkingDir "\..\..\"
 FileMove, *, % baseDir, True
 FileRemoveDir, % A_WorkingDir, False
 
-;Remove old fork of youtube-dl
+
+;Remove folders created by older versions
 FileRemoveDir, % baseDir "youtube-dl-my-tweaks", True
 FileRemoveDir, % baseDir "youtube-dl-master", True
+FileRemoveDir, % baseDir "yt-dlc-master", True

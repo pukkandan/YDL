@@ -54,7 +54,8 @@ These options are not changable in the GUI.
 
 Key | Description
 ------------ | -------------
-**log**| Whether to log the command to [ydl.ahk.log](ydl.ahk.log) (`1`=Log, `0`=Don't log).
+**log**| Whether to log the command to [ydl.ahk.log](ydl.ahk.log). (`1`=Log, `0`=Don't log)
+**update**| Whether to update yt-dlp automatically. (`1`=Update, `0`=Don't update)
 **opts**| These [options](https://github.com/yt-dlp/yt-dlp#options) will be additionally passed to `yt-dlp`. Only the options given in **\[Options\]/opts** may override these. **PS:** It is now recommended to create a `yt-dlp.conf` file for your common options instead. See [portable config](https://github.com/yt-dlp/yt-dlp#configuration)
 
 ## FAQ
@@ -71,6 +72,6 @@ The download process is wrapped in [retry.cmd](retry.cmd) which will keep retryi
 
 The format selection and output path are set by the script using `-S` and `-P` options of `yt-dlp`. Since these options don't exist in `youtube-dl`, it cannot be used as a replacement.
 
-#### How do I update `YDL`/`yt-dlp`?
+#### How do I update `YDL`?
 
-<!--There is no auto-update in the current version of `YDL`. -->To update, run [update.ahk](update.ahk). Note that this updates both the script and `yt-dlp`, but not any other dependancies.
+To update the script, simply run [update.ahk](update.ahk).

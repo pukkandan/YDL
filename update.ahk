@@ -1,14 +1,14 @@
 ﻿;============== CONFIG
 
 global SCRNAME:="YDL Updater"
-global EXE:="ydl.ahk"
+global EXE:=A_ScriptDir "\ydl.ahk"
 global TEMP:=A_ScriptDir "\temp"
 
-Options:=[	 {	 "url": "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
-				,"file": "yt-dlp.exe" 															}
-			,{	 "url": "https://codeload.github.com/pukkandan/YDL/zip/master"
-				,"temp": True, unzip:True
-				,"run": "YDL-master\update-run-once.ahk"										}	]
+Options:=[	 {	 url: "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+				,file: "yt-dlp.exe", name: "yt-dlp" 											}
+			,{	 url: "https://codeload.github.com/pukkandan/YDL/zip/master"
+				,file: TEMP "\update.zip", name: "YDL", unzip: TEMP, overwrite: True
+				,run: TEMP "\YDL-master\update-run-once.ahk"										}	]
 
 
 
@@ -28,27 +28,33 @@ Menu, Tray, Tip, % SCRNAME
 
 
 FileCreateDir, % TEMP
-zipfile:=TEMP "\update.zip"
 for _,item in Options {
-	URLDownloadToFile, % item.url, % item.file? item.file: zipfile
+	if !item.overwrite and fileExist(item.file)
+		continue
+	splash("Downloading " item.name)
+	URLDownloadToFile, % item.url, % item.file
 	if ErrorLevel {
 		showErr("Downloading", item.url)
 		return
 	}
-	;msgbox % "downloaded " item.url
-	
-	path:= item.temp? TEMP : A_WorkingDir
-	if item.unzip
-		unzip(zipfile, path)
-	;msgbox % "unzipped " zipfile
+	splash("Downloaded " item.name)
 
-	FileDelete, % zipfile
-	if item.hasKey("run") {
+	path:= item.temp? TEMP : A_WorkingDir
+	if item.unzip {
+		splash("Extracting " item.name)
+		unzip(item.file, item.unzip)
+		splash("Extracted " item.name)
+	}
+
+	FileDelete, % item.file
+	if item.run {
 		sleep 100
-		run, % path "\" item.run,, UseErrorLevel
+		splash("Postprocessing " item.name)
+		run, % item.run,, UseErrorLevel
 	}
 }
-sleep 100
+sleep 1000
+splash("Starting app")
 run, % EXE
 
 
@@ -57,6 +63,9 @@ showErr(action, val) {
 	return false
 }
 
+splash(text:=""){
+	SplashTextOn,,, % text
+}
 
 
 

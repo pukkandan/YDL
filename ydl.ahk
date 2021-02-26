@@ -31,6 +31,7 @@ global Path	:= getOpt("path", A_WorkingDir "\Download")
 	 , Sign	:= getOpt("sign", ">=")
 	 , Res	:= getOpt("res", "720")
 	 , Log	:= getOpt("log", False, "Hidden")
+	 , Upd	:= getOpt("update", True, "Hidden")
 	 , Def	:= getOpt("opts",, "Hidden")
 	 , URL	:= ""
 
@@ -84,9 +85,10 @@ Download(){
 	resolution 	:= isInteger(Res)? ":" Res :""
 	format 		:= "-S """ (reverseSort?"+":"") "res" resolution """"
 	homePath	:= "-P ""home:" Path """"
+	update 		:= Upd? "-U" :""
 
 	EnvSet, ydl_home, % Path
-	cmd := "retry.cmd yt-dlp " homePath " " prof " " format " " getAud " " Def " " Opts " " urls
+	cmd := "retry.cmd yt-dlp " update " " homePath " " prof " " format " " getAud " " Def " " Opts " " urls
 	if Log
 		log(cmd)
 	run, % cmd

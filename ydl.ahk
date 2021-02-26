@@ -8,7 +8,6 @@ FileInstall, README.md, README.md, 1
 FileInstall, icon.png, icon.png
 FileInstall, retry.cmd, retry.cmd
 FileInstall, terminal-format.cmd, terminal-format.cmd
-FileInstall, youtube-dl.cmd, youtube-dl.cmd
 FileInstall, update.ahk, update.ahk
 FileInstall, update-run-once.ahk, update-run-once.ahk
 FileInstall, Channel.conf, Channel.conf
@@ -23,7 +22,7 @@ Menu, Tray, Tip, % SCRNAME
 #NoTrayIcon
 
 EnvSet, ydl_dir, % A_ScriptDir
-global SCRNAME:="Youtube-Dl Launcher"
+global SCRNAME:="YT-DLP Launcher"
 
 global Path	:= getOpt("path", A_WorkingDir "\Download")
 	 , Opts	:= getOpt("opts")

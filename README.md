@@ -1,20 +1,20 @@
 NOTE: This is currently working, but will no longer be updated
 
-# Youtube-Dl Launcher ([YDL](https://github.com/pukkandan/ydl#ydl))
+# YT-DLP Launcher
 
-A Simple GUI Launcher for [my own fork](https://github.com/yt-dlp/yt-dlp) of [yt-dlp](https://github.com/blackjack4494/yt-dlp) on Windows using [AHK](https://www.autohotkey.com).
+YDL, a Simple GUI Launcher for [yt-dlp](https://github.com/yt-dlp/yt-dlp) on Windows using [AHK](https://www.autohotkey.com).
 
 ## Prerequisites
 
-* [AHK1.1.\*](https://www.autohotkey.com/download/)
+* [AHK1.1.\*](https://www.autohotkey.com/download)
 
 #### Optional
-* [ffmpeg](https://www.gyan.dev/ffmpeg/builds/) - Required for mergring audio and video files together, extracting audio, embedding metadata etc.
+* [ffmpeg](https://www.gyan.dev/ffmpeg/builds) - Required for mergring audio and video files together, extracting audio, embedding metadata etc.
 * [aria2c](https://github.com/aria2/aria2/releases) - Provides faster downloads for all non-DASH videos.
 
 ## How to Use
 
-1. Install [AHK1.1.\*](https://www.autohotkey.com/download/) and [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+1. Install [AHK1.1.\*](https://www.autohotkey.com/download)
 1. Download the [optional](#optional) prerequisites if needed.
 1. Download either the entire repository or just [update.ahk](update.ahk) and place the file(s) in an empty folder.
 1. Either make sure the all the prerequisites (except AHK) are available in `PATH` variable, or copy them to the script directory.
@@ -45,7 +45,7 @@ Key | Saves the last used value of
 **res**|Resolution
 **sign**|Sign prefixing Resolution (`>=`/`<=`)
 **path**|Path
-**opts**|[Options](https://github.com/ytdl-org/youtube-dl#options) to be passed to `youtube-dl`
+**opts**|[Options](https://github.com/yt-dlp/yt-dlp#options) to be passed to `yt-dlp`
 
 
 ### \[Hidden\]
@@ -68,7 +68,7 @@ This field accepts all the same [options](https://github.com/yt-dlp/yt-dlp#optio
 
 The download process is wrapped in [retry.cmd](retry.cmd) which will keep retrying the download until `yt-dlp` exits without any error. So, if any of the videos is not downloadable (due to the video being removed/private/age-gated, url being wrong, etc), the download will never complete. You can simply break/close the terminal window to stop the download process.
 
-#### Can I use youtube-dl with this?
+#### Can I use youtube-dl/youtube-dlc with this?
 
 The format selection and output path are set by the script using `-S` and `-P` options of `yt-dlp`. Since these options don't exist in `youtube-dl`, it cannot be used as a replacement.
 

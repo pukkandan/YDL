@@ -39,14 +39,13 @@ for _,item in Options {
 	}
 	splash("Downloaded " item.name)
 
-	path:= item.temp? TEMP : A_WorkingDir
 	if item.unzip {
 		splash("Extracting " item.name)
 		unzip(item.file, item.unzip)
+		FileDelete, % item.file
 		splash("Extracted " item.name)
 	}
 
-	FileDelete, % item.file
 	if item.run {
 		sleep 100
 		splash("Postprocessing " item.name)

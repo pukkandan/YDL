@@ -1,4 +1,4 @@
-NOTE: This is currently working, but will no longer be updated
+NOTE: This will no longer be updated except bugfixes
 
 # YT-DLP Launcher
 

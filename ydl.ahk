@@ -82,7 +82,11 @@ Download(){
 
 	reverseSort := Sign==">=" || Res="smallest"
 	resolution 	:= isInteger(Res)? ":" Res :""
-	format 		:= "-S """ (reverseSort?"+":"") "res" resolution """"
+	; yt-dlp defaults to largest video if option blank
+	If (Res = "largest")
+		format          := ""
+	else
+		format 		:= "-S """ (reverseSort?"+":"") "res" resolution """"
 	homePath	:= "-P ""home:" Path """"
 	update 		:= Upd? "-U" :""
 

@@ -80,7 +80,7 @@ Download(){
 	getAud 	:= Res="audio"? "-x -f ba" : ""
 	prof 	:= Prof="<None>"? "" : "--config-location """ Prof ".conf"""
 
-	reverseSort := Sign==">=" || Res="smallest"
+	reverseSort := Res!= "largest" && (Sign==">=" || Res="smallest")
 	resolution 	:= isInteger(Res)? ":" Res :""
 	format 		:= "-S """ (reverseSort?"+":"") "res" resolution """"
 	homePath	:= "-P ""home:" Path """"
